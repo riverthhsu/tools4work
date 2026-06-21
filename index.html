@@ -1995,63 +1995,6 @@
             }
         }
 
-        // ==================== 9. 世界時間轉換 ====================
-        function resetSliderToCurrent() {
-            const localHr = new Date().getHours();
-            document.getElementById('timeSlider').value = localHr;
-            renderWorldClocks(localHr);
-        }
-        function onTimeSliderChange(val) {
-            renderWorldClocks(parseInt(val));
-        }
-        function renderWorldClocks(baseHour = 12) {
-            const container = document.getElementById('clocksGrid');
-            container.innerHTML = '';
-            AppState.cities.forEach(city => {
-                let cityHour = (baseHour - 8 + city.offset);
-                let dayOffset = "今天";
-                if (cityHour < 0) { dayOffset = "昨天"; cityHour += 24; }
-                else if (cityHour >= 24) { dayOffset = "明天"; cityHour -= 24; }
-
-                let badgeColor = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20";
-                let statusText = "深夜深度睡眠";
-                if (cityHour >= 9 && cityHour < 18) {
-                    badgeColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-                    statusText = "標準黃金工時";
-                } else if ((cityHour >= 6 && cityHour < 9) || (cityHour >= 18 && cityHour < 22)) {
-                    badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
-                    statusText = "非工閒暇時間";
-                }
-
-                container.innerHTML += `
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-                        <div class="flex justify-between items-start">
-                            <div>
-                if (triggerId === 'F') cValue = (triggerVal - 32) * 5/9;
-                else if (triggerId === 'K') cValue = triggerVal - 273.15;
-
-                fields.forEach(f => {
-                    if (f.id === triggerId) return;
-                    let outVal = 0;
-                    if (f.id === 'C') outVal = cValue;
-                    else if (f.id === 'F') outVal = cValue * 9/5 + 32;
-                    else if (f.id === 'K') outVal = cValue + 273.15;
-                    document.getElementById(`unit_${f.id}`).value = outVal.toFixed(2);
-                });
-            } else {
-                // 標準線性乘積轉換
-                const triggerDef = fields.find(f => f.id === triggerId);
-                // 轉換到錨點標準基準值
-                const anchorValue = triggerVal * triggerDef.ratioToAnchor;
-
-                fields.forEach(f => {
-                    if (f.id === triggerId) return;
-                    const converted = anchorValue / f.ratioToAnchor;
-                    document.getElementById(`unit_${f.id}`).value = converted.toFixed(4);
-                });
-            }
-        }
-
         // ==================== 10. 隨手靈感白板 ====================
         function initWhiteboard() {
             const canvas = document.getElementById('whiteboardCanvas');
