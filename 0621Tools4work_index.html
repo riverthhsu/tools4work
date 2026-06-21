@@ -1,0 +1,2340 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools 4 My Work - 科技工程與辦公效率中心</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Marked.js for Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#1e293b',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        canvas {
+            touch-action: none;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col md:flex-row overflow-hidden font-sans antialiased bg-slate-950 text-slate-100">
+
+    <!-- 側邊導覽列 -->
+    <aside class="w-full md:w-64 bg-slate-900 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col justify-between shrink-0 z-10 overflow-y-auto scrollbar">
+        <div>
+            <!-- Logo Header -->
+            <div class="p-6 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-indigo-600 rounded-lg text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>
+                    </div>
+                    <span class="text-lg font-bold tracking-wider text-indigo-400">Tools 4 Work</span>
+                </div>
+                <!-- 手機版選單切換 -->
+                <button id="mobileMenuBtn" class="md:hidden text-slate-400 hover:text-white focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg>
+                </button>
+            </div>
+
+            <!-- 導覽選單 (含分組) -->
+            <nav class="p-4 space-y-1 hidden md:block" id="navLinks">
+                <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition bg-indigo-600/10 text-indigo-400 border-l-4 border-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>
+                    <span>工作儀表板</span>
+                </button>
+
+                <!-- 分組 1: 電池與硬體工程 -->
+                <div class="pt-4 pb-1.5 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    電池與硬體工程
+                </div>
+                <button onclick="window.open('https://cell-arrangement.netlify.app/', '_blank')" id="btn-tab-cell-calculator" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    <span>電芯排列計算器</span>
+                </button>
+                <button onclick="window.open('https://riverthhsu.github.io/composite-busplate/', '_blank')" id="btn-tab-busbar-calculator" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                    <span>複合導片阻抗計算器</span>
+                </button>
+                <button onclick="window.open('https://riverthhsu.github.io/busplate-DCIR/', '_blank')" id="btn-tab-battery-lifecycle" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>單一導片阻抗計算器 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+                <button onclick="switchTab('resistor-decoder')" id="btn-tab-resistor-decoder" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span>電阻色碼與貼片解碼 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+                <button onclick="switchTab('led-resistor')" id="btn-tab-led-resistor" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span>LED 限流電阻計算 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+
+                <!-- 分組 2: 訊號與物理模擬 -->
+                <div class="pt-4 pb-1.5 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    訊號與物理模擬
+                </div>
+                <button onclick="switchTab('fourier-synth')" id="btn-tab-fourier-synth" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+                    <span>傅立葉波形與頻譜 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+                <button onclick="switchTab('unit-converter')" id="btn-tab-unit-converter" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+                    <span>物理工程單位轉換 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+
+                <!-- 分組 3: 專案研發與開發輔助 -->
+                <div class="pt-4 pb-1.5 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    專案研發與開發輔助
+                </div>
+                <button onclick="switchTab('whiteboard')" id="btn-tab-whiteboard" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                    <span>隨手塗鴉靈感白板</span>
+                </button>
+                <button onclick="switchTab('color-replacer')" id="btn-tab-color-replacer" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span>圖片色彩辨識與替換</span>
+                </button>
+                <button onclick="switchTab('gantt')" id="btn-tab-gantt" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span>專案時程甘特圖 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+                <button onclick="switchTab('markdown-preview')" id="btn-tab-markdown-preview" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-lime-500"></span>
+                    <span>Markdown 即時預覽 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+                <button onclick="switchTab('dev-generator')" id="btn-tab-dev-generator" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+                    <span>金鑰密碼與雜湊生成 <span class="text-[9px] text-indigo-400 font-bold ml-1">New</span></span>
+                </button>
+                <button onclick="switchTab('todo')" id="btn-tab-todo" class="nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent">
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span>研發敏捷工作看板</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- 底部使用者 -->
+        <div class="p-4 border-t border-slate-800 hidden md:block">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold text-slate-200">
+                    W
+                </div>
+                <div>
+                    <h4 class="text-xs font-semibold text-slate-300">智慧工作空間</h4>
+                    <p class="text-[10px] text-slate-500">高效能 12 款工具套件</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 主內容區域 -->
+    <main class="flex-1 flex flex-col overflow-y-auto bg-slate-950 p-6 md:p-10 relative">
+        
+        <!-- 頂部動態狀態列 -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-slate-800 space-y-4 md:space-y-0">
+            <div>
+                <h1 id="mainTitle" class="text-2xl md:text-3xl font-extrabold text-slate-100 tracking-tight">
+                    工作空間儀表板
+                </h1>
+                <p id="mainSubtitle" class="text-sm md:text-base text-slate-400 mt-1">
+                    點擊任何下方卡片開始使用 12 款高效工程研發工具。
+                </p>
+            </div>
+            <div class="flex items-center space-x-3 self-start md:self-auto">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20">
+                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    極速模擬端已就緒
+                </span>
+                <span id="currentHeaderTime" class="text-sm text-slate-400 font-mono bg-slate-900 border border-slate-800 px-3 py-1 rounded-lg">04:13 PM</span>
+            </div>
+        </header>
+
+        <!-- === TAB 1: 整合儀表板 === -->
+        <section id="tab-dashboard" class="tab-content flex-col space-y-8 active">
+            <!-- 13大工具卡片網格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="toolsGrid">
+                <!-- 工具卡片模板將採用 js 渲染或直接刻好，為確保高載入效能，此處預埋所有精美卡片 -->
+
+                <!-- 1. 電芯排列 -->
+                <div onclick="window.open('https://cell-arrangement.netlify.app/', '_blank')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-indigo-600/10 text-indigo-400 rounded-lg text-xs font-bold">#01 電池</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">電芯排列計算器</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">2D電芯排列佈局、圓柱與方形排佈尺寸與電阻橋接估算。</p>
+                    </div>
+                </div>
+
+                <!-- 2. 複合導片 -->
+                <div onclick="window.open('https://riverthhsu.github.io/composite-busplate/', '_blank')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-indigo-600/10 text-indigo-400 rounded-lg text-xs font-bold">#02 電池</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">複合導片阻抗計算器</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">多層金屬複合貼合阻抗模擬、接觸面壓降與溫升損耗分析。</p>
+                    </div>
+                </div>
+
+                <!-- 3. 單一導片阻抗計算器 -->
+                <div onclick="window.open('https://riverthhsu.github.io/busplate-DCIR/', '_blank')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-emerald-600/10 text-emerald-400 rounded-lg text-xs font-bold">#03 電池 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">單一導片阻抗計算器</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">精確計算單一金屬導片直流阻抗、壓降與熱功耗預估。</p>
+                    </div>
+                </div>
+
+                <!-- 4. 電阻色碼與貼片解碼 -->
+                <div onclick="switchTab('resistor-decoder')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-amber-600/10 text-amber-400 rounded-lg text-xs font-bold">#04 硬體 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">電阻色碼與貼片解碼</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">4環、5環電阻值快選解讀與 SMD 貼片電阻多種規約換算。</p>
+                    </div>
+                </div>
+
+                <!-- 5. LED 限流電阻計算 -->
+                <div onclick="switchTab('led-resistor')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-rose-600/10 text-rose-400 rounded-lg text-xs font-bold">#05 硬體 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">LED 限流電阻計算器</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">依順向偏壓與目標電流匹配限流阻抗，推薦安全功耗封裝與電路示意。</p>
+                    </div>
+                </div>
+
+                <!-- 6. 傅立葉波形合成 -->
+                <div onclick="switchTab('fourier-synth')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-pink-600/10 text-pink-400 rounded-lg text-xs font-bold">#06 訊號 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">傅立葉波形與頻譜模擬</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">基頻與5次諧波強弱微調，動態觀察時域綜合訊號與頻域分佈。</p>
+                    </div>
+                </div>
+
+                <!-- 7. 工程物理單位轉換 -->
+                <div onclick="switchTab('unit-converter')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-teal-600/10 text-teal-400 rounded-lg text-xs font-bold">#07 物理 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">工程物理單位轉換器</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2"> mil, inch, mm, 截面積, 溫度及材料專用電阻率之交互換算。</p>
+                    </div>
+                </div>
+
+                <!-- 8. 塗鴉白板 -->
+                <div onclick="switchTab('whiteboard')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-orange-600/10 text-orange-400 rounded-lg text-xs font-bold">#08 靈感</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">隨手塗鴉靈感白板</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">繪圖、草圖與手寫公式紀錄，具備步驟重做返回與透明 PNG 匯出。</p>
+                    </div>
+                </div>
+
+                <!-- 9. 圖像色彩替換 -->
+                <div onclick="switchTab('color-replacer')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-purple-600/10 text-purple-400 rounded-lg text-xs font-bold">#09 圖像</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">圖片色彩辨識與替換</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">畫布像素採色吸管、自訂色差閾值局部區域動態變形改色。</p>
+                    </div>
+                </div>
+
+                <!-- 10. 專案甘特圖 -->
+                <div onclick="switchTab('gantt')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-blue-600/10 text-blue-400 rounded-lg text-xs font-bold">#10 管理 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">專案時程甘特圖</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">新增工作、動態設定進度百分比、天數與圖形化排程展示。</p>
+                    </div>
+                </div>
+
+                <!-- 11. Markdown 預覽 -->
+                <div onclick="switchTab('markdown-preview')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-lime-600/10 text-lime-400 rounded-lg text-xs font-bold">#11 文檔 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">Markdown 即時預覽器</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">左邊打 Markdown 語法，右邊瞬間呈現具備專業排版的簡報與文件。</p>
+                    </div>
+                </div>
+
+                <!-- 12. 金鑰密碼與雜湊 -->
+                <div onclick="switchTab('dev-generator')" class="cursor-pointer group bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="p-2 bg-yellow-600/10 text-yellow-400 rounded-lg text-xs font-bold">#12 開發 (New)</span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                        </div>
+                        <h3 class="text-sm font-bold text-slate-100 group-hover:text-indigo-400 transition">金鑰生成與雜湊工具</h3>
+                        <p class="text-xs text-slate-400 mt-2 line-clamp-2">強密碼規則亂數生成、文字異步計算極速 SHA-256 原生加密雜湊值。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 儀表板說明 -->
+            <div class="bg-indigo-950/20 border border-indigo-500/20 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+                <div class="p-3 bg-indigo-500/10 rounded-lg text-indigo-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-indigo-300">💡 工程效率整合中心說明書</h3>
+                    <p class="text-slate-400 text-xs mt-1 leading-relaxed">
+                        本系統已深度擴展為 12 大工具。所有物理建模、訊號合成與加密算法均在純前端高效率執行，不向任何第三方發送資料。您可以通過點選上方卡片，或是左側抽屜面板自由切換研發模組。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 2: 電芯排列計算器 === -->
+        <section id="tab-cell-calculator" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 設定欄 -->
+                <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">電芯參數設定</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">電芯封裝類型</label>
+                            <select id="cellType" onchange="toggleCellTypeInputs()" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2.5 text-slate-300 focus:outline-none">
+                                <option value="cylindrical">圓柱形電芯 (Cylindrical)</option>
+                                <option value="prismatic">方形電芯 (Prismatic)</option>
+                            </select>
+                        </div>
+                        <div id="cylindricalSpecs" class="space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">圓柱型號</label>
+                                <select id="cylPreset" onchange="applyCylPreset()" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2.5 text-slate-300 focus:outline-none">
+                                    <option value="18650">18650 (D:18mm, H:65mm)</option>
+                                    <option value="21700" selected>21700 (D:21mm, H:70mm)</option>
+                                    <option value="32650">32650 (D:32mm, H:65mm)</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">直徑 D (mm)</label>
+                                    <input type="number" id="cylDiameter" value="21" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">高度 H (mm)</label>
+                                    <input type="number" id="cylHeight" value="70" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="prismaticSpecs" class="space-y-3 hidden">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">寬 W</label>
+                                    <input type="number" id="prisWidth" value="148" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-2 py-2 text-slate-300 text-center">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">厚 T</label>
+                                    <input type="number" id="prisThick" value="27" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-2 py-2 text-slate-300 text-center">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">高 H</label>
+                                    <input type="number" id="prisHeight" value="95" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-2 py-2 text-slate-300 text-center">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">串聯數 (S)</label>
+                                <input type="number" id="seriesCount" value="10" min="1" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">並聯數 (P)</label>
+                                <input type="number" id="parallelCount" value="4" min="1" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">單體電壓 (V)</label>
+                                <input type="number" id="singleVolts" value="3.7" step="0.1" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">單體容量 (Ah)</label>
+                                <input type="number" id="singleCapacity" value="4.5" step="0.1" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">排列模式</label>
+                            <select id="layoutStyle" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2.5 text-slate-300 focus:outline-none">
+                                <option value="aligned">對齊陣列 (Aligned)</option>
+                                <option value="honeycomb">蜂窩交錯 (Staggered)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">電芯安全間隙 (mm)</label>
+                            <input type="number" id="cellGap" value="2" min="0" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                        </div>
+                    </div>
+                    <button onclick="calculateCellLayout()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition shadow-lg">
+                        執行佈局與連線計算
+                    </button>
+                </div>
+                <!-- 渲染輸出欄 -->
+                <div class="lg:col-span-8 flex flex-col space-y-4">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+                            <span class="block text-[10px] text-slate-400">總體電芯數</span>
+                            <span id="outTotalCells" class="text-xl font-black text-indigo-400">40 pcs</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+                            <span class="block text-[10px] text-slate-400">額定總電壓</span>
+                            <span id="outPackVolts" class="text-xl font-black text-emerald-400">37.0 V</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+                            <span class="block text-[10px] text-slate-400">電組總容量</span>
+                            <span id="outPackCapacity" class="text-xl font-black text-amber-400">18.0 Ah</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+                            <span class="block text-[10px] text-slate-400">模組儲能總量</span>
+                            <span id="outPackEnergy" class="text-xl font-black text-rose-400">666.0 Wh</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                        <span class="text-[10px] text-slate-400 uppercase">預估實體尺寸</span>
+                        <div id="outPackDimensions" class="text-sm font-bold text-slate-200 mt-1">長度: 240 mm | 寬度: 98 mm | 高度: 70 mm</div>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col flex-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xs font-bold text-slate-200">排佈與並聯匯流片 2D 連接線圖</h3>
+                            <div class="flex space-x-3 text-[10px] text-slate-400">
+                                <span class="flex items-center"><span class="w-2.5 h-2.5 bg-blue-500 rounded-full mr-1"></span>並聯片</span>
+                                <span class="flex items-center"><span class="w-2.5 h-2.5 bg-red-500 rounded-full mr-1"></span>串聯橋</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950 rounded-xl border border-slate-800/60 p-4 flex items-center justify-center min-h-[250px]">
+                            <canvas id="cellLayoutCanvas" class="max-w-full h-auto"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 3: 複合導片阻抗計算器 === -->
+        <section id="tab-busbar-calculator" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">導片物理規格配置</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">主體層 (Layer 1) 材質</label>
+                            <select id="layer1Material" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2.5 text-slate-300 focus:outline-none">
+                                <option value="1.72e-8">紅銅 (Copper - 1.72 uΩ·cm)</option>
+                                <option value="2.82e-8">純鋁 (Aluminum - 2.82 uΩ·cm)</option>
+                                <option value="6.99e-8">純鎳 (Nickel - 6.99 uΩ·cm)</option>
+                                <option value="1.6e-7">不銹鋼 (Steel - 16.0 uΩ·cm)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">主體層厚度 (mm)</label>
+                            <input type="number" id="layer1Thick" value="0.2" step="0.05" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                        </div>
+                        <div class="border-t border-slate-800 pt-3">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">啟用雙層附加貼層 (Layer 2)</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="useLayer2" onchange="toggleLayer2Inputs()" class="sr-only peer">
+                                    <div class="w-8 h-4 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-400 after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-indigo-600"></div>
+                                </label>
+                            </div>
+                            <div id="layer2Inputs" class="space-y-3 hidden">
+                                <select id="layer2Material" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2.5 text-slate-300">
+                                    <option value="6.99e-8" selected>純鎳鍍層 / 外覆蓋</option>
+                                    <option value="1.72e-8">紅銅輔助層</option>
+                                </select>
+                                <input type="number" id="layer2Thick" value="0.05" step="0.01" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300" placeholder="鍍層厚度">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">導片寬度 (mm)</label>
+                                <input type="number" id="busbarWidth" value="12" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">導片長度 (mm)</label>
+                                <input type="number" id="busbarLength" value="85" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">焊接接觸點數</label>
+                                <input type="number" id="weldSpots" value="4" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">點接觸電阻 (mΩ)</label>
+                                <input type="number" id="weldResistance" value="0.5" step="0.1" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">安全負載工作電流 (A)</label>
+                            <input type="number" id="loadCurrent" value="45" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                        </div>
+                    </div>
+                    <button onclick="calculateBusbar()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                        執行熱功率阻抗運算
+                    </button>
+                </div>
+                <!-- 模擬分析顯示 -->
+                <div class="lg:col-span-7 flex flex-col space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+                        <h3 class="text-xs font-bold text-slate-200 mb-4">阻抗模擬與發熱分析結果</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg">
+                                <span class="text-[9px] text-slate-500 block">金屬總體直流阻抗</span>
+                                <span id="outBusbarR" class="text-lg font-black text-indigo-400">1.218 mΩ</span>
+                            </div>
+                            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg">
+                                <span class="text-[9px] text-slate-500 block">點焊面總接觸阻抗</span>
+                                <span id="outContactR" class="text-lg font-black text-indigo-400">0.125 mΩ</span>
+                            </div>
+                            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg">
+                                <span class="text-[9px] text-slate-500 block">負載通過直流壓降</span>
+                                <span id="outVoltageDrop" class="text-lg font-black text-emerald-400">60.43 mV</span>
+                            </div>
+                            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg">
+                                <span class="text-[9px] text-slate-500 block">純阻抗熱損耗 (功耗)</span>
+                                <span id="outPowerLoss" class="text-lg font-black text-rose-400">2.72 W</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 rounded-lg border border-emerald-500/20 bg-emerald-950/10" id="thermalSeverityBlock">
+                            <span class="text-xs font-bold block text-emerald-400" id="thermalLabel">正常安全 (Safe Range)</span>
+                            <span class="text-[10px] text-slate-400 mt-1 block" id="thermalDesc">功耗熱密度低，自然冷卻不升溫。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 4: 新增: 鋰電循環衰退預測器 === -->
+        <section id="tab-battery-lifecycle" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">循環老化配置模擬</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">放電深度 Depth of Discharge (DoD %)</label>
+                                <span id="lblDoD" class="text-xs font-mono text-indigo-400">80%</span>
+                            </div>
+                            <input type="range" id="paramDoD" min="10" max="100" value="80" oninput="document.getElementById('lblDoD').innerText=this.value+'%'" class="w-full accent-indigo-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">電池工作溫度 (°C)</label>
+                                <span id="lblTemp" class="text-xs font-mono text-indigo-400">25°C</span>
+                            </div>
+                            <input type="range" id="paramTemp" min="0" max="60" value="25" oninput="document.getElementById('lblTemp').innerText=this.value+'°C'" class="w-full accent-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">充電倍率 (C-rate)</label>
+                            <select id="paramCRate" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2.5 text-slate-300 focus:outline-none">
+                                <option value="0.2">0.2C (低發熱緩充)</option>
+                                <option value="0.5" selected>0.5C (標準常規)</option>
+                                <option value="1.0">1.0C (高倍率快充)</option>
+                                <option value="2.0">2.0C (極速充衰退快)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="calculateBatteryLifecycle()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                        繪製健康衰退曲線
+                    </button>
+                </div>
+                <!-- 預測曲線繪圖 -->
+                <div class="lg:col-span-8 flex flex-col space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col flex-1">
+                        <h3 class="text-xs font-bold text-slate-200 mb-4">1000次充放電壽命 SOH% 衰退曲線</h3>
+                        <div class="bg-slate-950 rounded-xl border border-slate-800/60 p-4 flex items-center justify-center min-h-[300px]">
+                            <canvas id="lifecycleCanvas" class="max-w-full h-auto"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 5: 新增: 電阻色碼與貼片解碼 === -->
+        <section id="tab-resistor-decoder" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 色碼配置 -->
+                <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">色環阻值解碼 (Color Band)</h2>
+                    
+                    <div class="flex space-x-4 mb-4">
+                        <label class="flex items-center space-x-2 text-xs">
+                            <input type="radio" name="bandType" value="4" checked onchange="toggleBands()" class="accent-indigo-500">
+                            <span>4 環電阻</span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-xs">
+                            <input type="radio" name="bandType" value="5" onchange="toggleBands()" class="accent-indigo-500">
+                            <span>5 環電阻</span>
+                        </label>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500">第 1 環 (十位數 / 百位數)</span>
+                                <select id="band1" onchange="decodeResistor()" class="w-full bg-slate-950 text-slate-200 border border-slate-800 p-2 rounded focus:outline-none"></select>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500">第 2 環 (個位數 / 十位數)</span>
+                                <select id="band2" onchange="decodeResistor()" class="w-full bg-slate-950 text-slate-200 border border-slate-800 p-2 rounded focus:outline-none"></select>
+                            </div>
+                        </div>
+                        <div id="band3Container" class="hidden">
+                            <span class="text-[10px] text-slate-500">第 3 環 (個位數)</span>
+                            <select id="band3" onchange="decodeResistor()" class="w-full bg-slate-950 text-slate-200 border border-slate-800 p-2 rounded focus:outline-none"></select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <span class="text-[10px] text-slate-500">倍率環 (Multiplier)</span>
+                                <select id="bandMult" onchange="decodeResistor()" class="w-full bg-slate-950 text-slate-200 border border-slate-800 p-2 rounded focus:outline-none"></select>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500">誤差環 (Tolerance)</span>
+                                <select id="bandTol" onchange="decodeResistor()" class="w-full bg-slate-950 text-slate-200 border border-slate-800 p-2 rounded focus:outline-none"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 視覺化渲染電阻外觀 -->
+                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center">
+                        <svg width="220" height="50" viewBox="0 0 220 50">
+                            <!-- 腳引線 -->
+                            <rect x="0" y="23" width="220" height="4" fill="#cbd5e1" />
+                            <!-- 電阻主體 -->
+                            <rect x="40" y="10" width="140" height="30" rx="6" fill="#fef08a" stroke="#eab308" stroke-width="1"/>
+                            <!-- 阻值色帶 -->
+                            <rect id="v_band1" x="60" y="10" width="8" height="30" fill="#000" />
+                            <rect id="v_band2" x="80" y="10" width="8" height="30" fill="#000" />
+                            <rect id="v_band3" x="100" y="10" width="8" height="30" fill="#000" class="hidden" />
+                            <rect id="v_bandMult" x="120" y="10" width="8" height="30" fill="#000" />
+                            <rect id="v_bandTol" x="150" y="10" width="8" height="30" fill="#000" />
+                        </svg>
+                    </div>
+
+                    <div class="bg-indigo-950/20 border border-indigo-500/20 p-4 rounded-xl text-center">
+                        <span class="text-[10px] text-slate-400 block uppercase">阻抗解算結果</span>
+                        <span id="resistorResultValue" class="text-2xl font-black text-indigo-400">10 kΩ ± 5%</span>
+                    </div>
+                </div>
+
+                <!-- 貼片 SMD 解碼 -->
+                <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">貼片式 (SMD) 電阻快速解碼</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">輸入 SMD 代碼 (例如: 103, 4702, 1R0, 01A)</label>
+                            <div class="flex space-x-2">
+                                <input type="text" id="smdCodeInput" value="4702" class="flex-1 bg-slate-950 border border-slate-800 text-sm rounded-lg px-4 py-2.5 text-slate-100 font-mono tracking-wider focus:outline-none">
+                                <button onclick="decodeSMD()" class="px-5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition">轉換</button>
+                            </div>
+                        </div>
+
+                        <!-- 貼片展示 -->
+                        <div class="bg-slate-950 rounded-xl border border-slate-800 p-8 flex flex-col items-center justify-center">
+                            <div class="w-48 h-24 bg-slate-800 rounded-lg border border-slate-700 relative flex items-center justify-center shadow-xl">
+                                <!-- 兩端錫電極 -->
+                                <div class="absolute left-0 top-0 bottom-0 w-8 bg-slate-400 rounded-l-lg border-r border-slate-500"></div>
+                                <div class="absolute right-0 top-0 bottom-0 w-8 bg-slate-400 rounded-r-lg border-l border-slate-500"></div>
+                                <!-- 代碼本體 -->
+                                <span id="smdDrawText" class="text-3xl font-black text-white tracking-widest font-mono z-10">4702</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-indigo-950/20 border border-indigo-500/20 rounded-xl">
+                            <span class="text-[10px] text-slate-400 block uppercase">貼片電阻解讀</span>
+                            <span id="smdResultText" class="text-xl font-black text-indigo-400 mt-1 block">47,000 Ω (47 kΩ)</span>
+                            <span class="text-[10px] text-slate-500 mt-1 block">* 相容 3位數 (5% 精度)、4位數 (1% 精度) 標記規約</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 6: 新增: LED 限流電阻計算 === -->
+        <section id="tab-led-resistor" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">LED 迴路安全運算</h2>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">供電電壓 Source Voltage (V)</label>
+                            <input type="number" id="ledVs" value="12" step="0.5" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">LED 順向壓降 (V)</label>
+                                <input type="number" id="ledVf" value="2.2" step="0.1" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">LED 目標電流 (mA)</label>
+                                <input type="number" id="ledIf" value="20" min="1" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="calculateLedResistor()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                        運算電路阻值
+                    </button>
+                </div>
+
+                <!-- 運算分析與電路圖 -->
+                <div class="lg:col-span-7 flex flex-col space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+                            <span class="block text-[10px] text-slate-400">所需精確阻值</span>
+                            <span id="outLedR" class="text-xl font-black text-indigo-400">490 Ω</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 text-center">
+                            <span class="block text-[10px] text-slate-400">推薦安全功率</span>
+                            <span id="outLedP" class="text-xl font-black text-rose-400">1/4 W (0.20W)</span>
+                        </div>
+                    </div>
+                    <!-- 迴路示意圖 -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col flex-1">
+                        <h3 class="text-xs font-bold text-slate-200 mb-4">電路迴路安全物理結構</h3>
+                        <div class="flex-1 bg-slate-950 rounded-xl border border-slate-800 p-6 flex flex-col items-center justify-center">
+                            <svg width="240" height="120" viewBox="0 0 240 120" class="text-slate-300">
+                                <!-- 電池 -->
+                                <line x1="30" y1="40" x2="30" y2="80" stroke="#cbd5e1" stroke-width="4"/>
+                                <line x1="20" y1="50" x2="40" y2="50" stroke="#cbd5e1" stroke-width="2"/>
+                                <line x1="25" y1="60" x2="35" y2="60" stroke="#cbd5e1" stroke-width="4"/>
+                                <line x1="20" y1="70" x2="40" y2="70" stroke="#cbd5e1" stroke-width="2"/>
+                                <!-- 迴路導線 -->
+                                <path d="M 30 40 L 30 20 L 110 20" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                <!-- 限流電阻 -->
+                                <rect x="110" y="10" width="30" height="20" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
+                                <path d="M 140 20 L 210 20 L 210 50" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                <!-- LED -->
+                                <polygon points="210,65 200,50 220,50" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+                                <line x1="200" y1="65" x2="220" y2="65" stroke="#cbd5e1" stroke-width="2"/>
+                                <!-- 回路到負極 -->
+                                <path d="M 210 65 L 210 100 L 30 100 L 30 80" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+                                <!-- 標記字 -->
+                                <text x="50" y="45" font-size="10" fill="#a5b4fc">Vs</text>
+                                <text x="120" y="45" font-size="10" fill="#fbbf24">R</text>
+                                <text x="180" y="70" font-size="10" fill="#3b82f6">LED</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 7: 圖片色彩辨識與替換 === -->
+        <section id="tab-color-replacer" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 工具控制面板 -->
+                <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">圖像處理控制</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">上傳本機圖片</label>
+                            <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600/10 file:text-indigo-400 file:cursor-pointer">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">吸取色彩</label>
+                                <div class="flex items-center space-x-2">
+                                    <div id="sampledColorPreview" class="w-8 h-8 rounded border border-slate-800 bg-white"></div>
+                                    <input type="text" id="sampledColorHex" value="#FFFFFF" readonly class="w-20 bg-slate-950 border border-slate-800 text-[10px] font-mono rounded px-1 py-1.5 text-center text-slate-400">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">轉換基準</label>
+                                <button onclick="setSampledAsTarget()" class="w-full h-8 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold">
+                                    設為目標色
+                                </button>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-800 pt-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">目標原色</label>
+                                    <input type="color" id="targetColorInput" value="#ff0000" class="w-full h-10 bg-transparent border-0 cursor-pointer">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">替換目標新色</label>
+                                    <input type="color" id="replacementColorInput" value="#6366f1" class="w-full h-10 bg-transparent border-0 cursor-pointer">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase">相近色允許誤差 (Tolerance)</label>
+                                <span id="toleranceVal" class="text-xs font-mono text-indigo-400">25</span>
+                            </div>
+                            <input type="range" id="colorTolerance" min="1" max="100" value="25" oninput="document.getElementById('toleranceVal').innerText = this.value" class="w-full accent-indigo-500">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <button onclick="applyColorReplacement()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                            執行顏色區域替換
+                        </button>
+                        <button onclick="downloadProcessedImage()" class="w-full py-2.5 bg-slate-850 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-bold transition">
+                            儲存並下載替換圖
+                        </button>
+                    </div>
+                </div>
+                <!-- 畫布圖紙 -->
+                <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-200">色彩吸色與修改畫布</h3>
+                            <p class="text-[10px] text-slate-500 mt-0.5">點擊下方任一色塊或上傳圖層可直接進行改色</p>
+                        </div>
+                        <button onclick="loadTestPattern()" class="text-[10px] bg-slate-850 hover:bg-slate-800 border border-slate-700/50 px-3 py-1 rounded">
+                            還原色彩測試圖
+                        </button>
+                    </div>
+                    <div class="flex-1 bg-slate-950 rounded-xl border border-slate-800 p-4 flex items-center justify-center min-h-[300px]">
+                        <div class="relative overflow-auto max-w-full max-h-[450px]">
+                            <canvas id="colorProcessorCanvas" class="cursor-crosshair"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 8: 新增: 傅立葉波形與頻譜模擬 === -->
+        <section id="tab-fourier-synth" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 各諧波調控 -->
+                <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">諧波分量調配 (Harmonics)</h2>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs">
+                                <span>基頻振幅 (Fundamental - f1)</span>
+                                <span id="lblH1" class="text-indigo-400 font-mono">1.00</span>
+                            </div>
+                            <input type="range" id="harmonic1" min="0" max="1" step="0.05" value="1.00" oninput="document.getElementById('lblH1').innerText=parseFloat(this.value).toFixed(2); drawFourierWave();" class="w-full accent-indigo-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs">
+                                <span>二次諧波 (f2)</span>
+                                <span id="lblH2" class="text-indigo-400 font-mono">0.00</span>
+                            </div>
+                            <input type="range" id="harmonic2" min="0" max="1" step="0.05" value="0.00" oninput="document.getElementById('lblH2').innerText=parseFloat(this.value).toFixed(2); drawFourierWave();" class="w-full accent-indigo-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs">
+                                <span>三次諧波 (f3)</span>
+                                <span id="lblH3" class="text-indigo-400 font-mono">0.00</span>
+                            </div>
+                            <input type="range" id="harmonic3" min="0" max="1" step="0.05" value="0.00" oninput="document.getElementById('lblH3').innerText=parseFloat(this.value).toFixed(2); drawFourierWave();" class="w-full accent-indigo-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs">
+                                <span>四次諧波 (f4)</span>
+                                <span id="lblH4" class="text-indigo-400 font-mono">0.00</span>
+                            </div>
+                            <input type="range" id="harmonic4" min="0" max="1" step="0.05" value="0.00" oninput="document.getElementById('lblH4').innerText=parseFloat(this.value).toFixed(2); drawFourierWave();" class="w-full accent-indigo-500">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs">
+                                <span>五次諧波 (f5)</span>
+                                <span id="lblH5" class="text-indigo-400 font-mono">0.00</span>
+                            </div>
+                            <input type="range" id="harmonic5" min="0" max="1" step="0.05" value="0.00" oninput="document.getElementById('lblH5').innerText=parseFloat(this.value).toFixed(2); drawFourierWave();" class="w-full accent-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-800 pt-3 flex space-x-2">
+                        <button onclick="presetWave('square')" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold rounded">標準方波合成</button>
+                        <button onclick="presetWave('sawtooth')" class="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold rounded">鋸齒波合成</button>
+                    </div>
+                </div>
+
+                <!-- 畫布展示時域與頻域 -->
+                <div class="lg:col-span-8 flex flex-col space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <h3 class="text-xs font-bold text-slate-200 mb-4">合成綜合訊號 (時域波形)</h3>
+                        <div class="bg-slate-950 rounded-xl border border-slate-800 p-2 flex justify-center">
+                            <canvas id="fourierTimeCanvas" class="max-w-full h-auto"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                        <h3 class="text-xs font-bold text-slate-200 mb-4">諧波頻譜分佈 (頻域分析)</h3>
+                        <div class="bg-slate-950 rounded-xl border border-slate-800 p-2 flex justify-center">
+                            <canvas id="fourierFreqCanvas" class="max-w-full h-auto"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 9: 新增: 物理工程單位轉換 === -->
+        <section id="tab-unit-converter" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 轉換配置 -->
+                <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">量測類別</h2>
+                    <select id="converterCategory" onchange="switchConverterCategory()" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2.5 text-slate-300 focus:outline-none">
+                        <option value="length">微細長度/線寬 (mil, inch, mm)</option>
+                        <option value="area">金屬截面積 (mm², cm², sq_in)</option>
+                        <option value="temperature">熱學溫度 (°C, °F, Kelvin)</option>
+                        <option value="resistivity">物理阻抗率 (uΩ·cm, Ω·m)</option>
+                    </select>
+                </div>
+
+                <!-- 互動輸入網格 -->
+                <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                    <h3 class="text-xs font-bold text-slate-200 mb-4">多向即時換算面板</h3>
+                    <div id="unitInputsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- 根據類別動態產生輸入欄位 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 11: 隨手靈感白板 === -->
+        <section id="tab-whiteboard" class="tab-content flex-col space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-200">隨手靈感白板</h2>
+                    <p class="text-xs text-slate-400">支持多點觸碰與手寫筆。隨時手繪物理迴路、電路草圖或架構圖。</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
+                        <span class="text-xs text-slate-400 font-medium">顏色：</span>
+                        <input type="color" id="paintColor" value="#6366f1" class="w-6 h-6 border-0 bg-transparent cursor-pointer rounded">
+                    </div>
+                    <div class="flex items-center space-x-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
+                        <span class="text-xs text-slate-400 font-medium">粗細：</span>
+                        <input type="range" id="paintSize" min="1" max="20" value="5" class="w-20 accent-indigo-500">
+                    </div>
+                    <button onclick="undoWhiteboard()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition" title="退回">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-15 9 9 0 0 0-6 2.3L3 13"></path></svg>
+                    </button>
+                    <button onclick="redoWhiteboard()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition" title="重做">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-15 9 9 0 0 1 6 2.3l3 4.3"></path></svg>
+                    </button>
+                    <button onclick="clearWhiteboard()" class="flex items-center space-x-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold">
+                        <span>清空</span>
+                    </button>
+                    <button onclick="downloadWhiteboard()" class="flex items-center space-x-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold">
+                        <span>匯出</span>
+                    </button>
+                </div>
+            </div>
+            <div id="whiteboardContainer" class="flex-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden min-h-[350px] relative">
+                <canvas id="whiteboardCanvas" class="w-full h-full cursor-crosshair block bg-[#0c1424]"></canvas>
+            </div>
+        </section>
+
+        <!-- === TAB 12: 新增: 專案時程甘特圖 === -->
+        <section id="tab-gantt" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- 甘特設定 -->
+                <div class="lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">新增甘特圖任務</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">任務名稱</label>
+                            <input type="text" id="ganttTaskName" value="電芯物理散熱風冷測試" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">起始天數 (第0~20天)</label>
+                                <input type="number" id="ganttTaskStart" value="2" min="0" max="25" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">持續時間 (天)</label>
+                                <input type="number" id="ganttTaskDuration" value="8" min="1" max="15" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">當前完成進度 (%)</label>
+                            <input type="number" id="ganttTaskProgress" value="45" min="0" max="100" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-3 py-2 text-slate-300">
+                        </div>
+                    </div>
+                    <button onclick="addGanttTask()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                        加入甘特計畫
+                    </button>
+                </div>
+                <!-- 甘特圖渲染面板 -->
+                <div class="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col space-y-4">
+                    <h3 class="text-xs font-bold text-slate-200">專案時程計劃看板 (30日區段)</h3>
+                    <div class="overflow-x-auto">
+                        <div class="min-w-[600px] space-y-4" id="ganttChartBody">
+                            <!-- JS 動態畫出時程甘特圖條 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 13: 新增: Markdown 即時預覽 === -->
+        <section id="tab-markdown-preview" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
+                <!-- 編輯器 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-slate-200">Markdown 工程原始碼編輯</span>
+                        <button onclick="loadSampleMarkdown()" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded">載入工程標準範本</button>
+                    </div>
+                    <textarea id="markdownInput" oninput="renderMarkdownLive()" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-300 focus:outline-none resize-none scrollbar">
+# 專案進度與鋰電池佈局規格書
+---
+## 1. 模組基本參數
+* **並聯結構**： 10S4P
+* **能量能率**： ~666 Wh
+* **安全間隔**： 2 mm
+
+## 2. 工程代辦狀態
+1. [x] 完成多金屬鍍層直流並聯電阻建模
+2. [ ] 完成 21700 電芯抗震固定支架強度測試
+3. [ ] 整合 LED 限流迴路電路測試
+
+> 警告：電路壓降不得高於總體供電容量的 0.5%
+                    </textarea>
+                </div>
+                <!-- 預覽器 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col space-y-4">
+                    <span class="text-xs font-bold text-slate-200 border-b border-slate-800 pb-2">時時解析規格書預覽效果 (WYSIWYG)</span>
+                    <div id="markdownOutput" class="flex-1 bg-slate-950 rounded-xl border border-slate-800 p-6 text-xs text-slate-300 overflow-y-auto scrollbar prose prose-invert max-w-none">
+                        <!-- 即時渲染輸出 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 14: 新增: 金鑰密碼與雜湊 === -->
+        <section id="tab-dev-generator" class="tab-content flex-col space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 隨機安全密碼 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">開發者安全亂數密碼生成</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] text-slate-400">密碼長度 (Characters)</label>
+                                <span id="passLengthVal" class="text-xs font-mono text-indigo-400">16</span>
+                            </div>
+                            <input type="range" id="passwordLength" min="8" max="64" value="16" oninput="document.getElementById('passLengthVal').innerText=this.value" class="w-full accent-indigo-500">
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" id="passUpper" checked class="accent-indigo-500">
+                                <span>包含大寫英文 (A-Z)</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" id="passLower" checked class="accent-indigo-500">
+                                <span>包含小寫英文 (a-z)</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" id="passNum" checked class="accent-indigo-500">
+                                <span>包含阿拉伯數字 (0-9)</span>
+                            </label>
+                            <label class="flex items-center space-x-2">
+                                <input type="checkbox" id="passSym" checked class="accent-indigo-500">
+                                <span>包含特殊符號 (!@#$%^&*)</span>
+                            </label>
+                        </div>
+                        <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg flex items-center justify-between">
+                            <span id="generatedPassword" class="font-mono text-xs text-emerald-400 tracking-wider overflow-x-auto select-all">點選生成取得安全密鑰</span>
+                            <button onclick="copyPasswordToClipboard()" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-bold ml-2 shrink-0">複製</button>
+                        </div>
+                    </div>
+                    <button onclick="generateStrongPassword()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                        立即亂數生成密碼
+                    </button>
+                </div>
+
+                <!-- 異步加密雜湊計算 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h2 class="text-sm font-bold text-slate-100 border-b border-slate-800 pb-3">原生物理雜湊金鑰 (Hash Generator)</h2>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] text-slate-400 mb-1">輸入欲雜湊的字串本文</label>
+                            <textarea id="hashInputText" rows="3" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg p-3 text-slate-100 focus:outline-none resize-none font-mono">Tools4MyWork_EngineeringSystem2026</textarea>
+                        </div>
+                        <div class="bg-slate-950 border border-slate-800 p-4 rounded-lg space-y-3">
+                            <div>
+                                <span class="text-[9px] text-slate-500 block uppercase">SHA-256 數位簽章雜湊</span>
+                                <span id="outHashSha256" class="font-mono text-[10px] text-indigo-400 block break-all select-all mt-1">計算中...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="calculateCryptoHash()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition">
+                        執行原生異步安全雜湊
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TAB 14: 研發敏捷工作看板 === -->
+        <section id="tab-todo" class="tab-content flex-col space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-200">工作管理看板</h2>
+                    <p class="text-xs text-slate-400">直觀展示各階段工作推進狀況，確保研發工作按時交付。</p>
+                </div>
+                <button onclick="openAddTodoModal()" class="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                    <span>新增任務卡片</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 overflow-y-auto pb-8">
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col min-h-[300px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+                        <span class="text-xs font-bold text-slate-400 flex items-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 mr-2"></span>待處理
+                        </span>
+                        <span id="count-todo" class="bg-slate-800 text-slate-300 text-xs px-2.5 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-todo" ondragover="allowDrop(event)" ondrop="drop(event, 'todo')" class="space-y-3 flex-1 overflow-y-auto min-h-[200px]"></div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col min-h-[300px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+                        <span class="text-xs font-bold text-slate-400 flex items-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 mr-2"></span>進行中
+                        </span>
+                        <span id="count-progress" class="bg-slate-800 text-slate-300 text-xs px-2.5 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-progress" ondragover="allowDrop(event)" ondrop="drop(event, 'progress')" class="space-y-3 flex-1 overflow-y-auto min-h-[200px]"></div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 flex flex-col min-h-[300px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+                        <span class="text-xs font-bold text-slate-400 flex items-center">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span>已完成
+                        </span>
+                        <span id="count-done" class="bg-slate-800 text-slate-300 text-xs px-2.5 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="col-done" ondragover="allowDrop(event)" ondrop="drop(event, 'done')" class="space-y-3 flex-1 overflow-y-auto min-h-[200px]"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modals -->
+    <div id="addTodoModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl">
+            <h3 class="text-sm font-bold text-slate-100 flex items-center space-x-2"><span>建立專案卡片</span></h3>
+            <div class="mt-4 space-y-4">
+                <div>
+                    <label class="block text-[10px] text-slate-400 mb-1">工作主旨</label>
+                    <input type="text" id="todoTitleInput" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-4 py-3 text-slate-300 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-slate-400 mb-1">優先級</label>
+                    <select id="todoPriorityInput" class="w-full bg-slate-950 border border-slate-800 text-xs rounded-lg px-4 py-3 text-slate-300 focus:outline-none">
+                        <option value="low">Low (低)</option>
+                        <option value="medium" selected>Medium (中)</option>
+                        <option value="high">High (高)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3 text-xs">
+                <button onclick="closeAddTodoModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg">取消</button>
+                <button onclick="createNewTodoTask()" class="px-5 py-2 bg-indigo-600 text-white rounded-lg">建立</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <script>
+        // --- 核心狀態管理 (12款整合工具) ---
+        const AppState = {
+            activeTab: 'dashboard',
+            todos: [
+                { id: '1', title: '分析複合鍍層阻抗並撰寫散熱估算報告', priority: 'high', status: 'progress' },
+                { id: '2', title: '完成 21700 四並聯電池組外包裝尺寸渲染圖', priority: 'medium', status: 'todo' },
+                { id: '3', title: '鋰電池1000次高溫衰退健康度模型驗收', priority: 'low', status: 'done' }
+            ],
+            whiteboard: {
+                isPainting: false,
+                lastX: 0,
+                lastY: 0,
+                historyStack: [],
+                historyIndex: -1
+            },
+            colorProcessor: {
+                originalData: null
+            },
+            ganttTasks: [
+                { id: 'g1', name: '1. 電芯陣列連接設計與模擬', start: 1, duration: 6, progress: 90 },
+                { id: 'g2', name: '2. 複合焊接導片阻抗量測驗證', start: 6, duration: 5, progress: 50 },
+                { id: 'g3', name: '3. 鋰電池熱失控溫度衰退物理建模', start: 10, duration: 10, progress: 15 },
+                { id: 'g4', name: '4. 訊號傅立葉波形分析電路設計', start: 18, duration: 8, progress: 0 }
+            ],
+            unitConverter: {
+                category: 'length',
+                definitions: {
+                    length: [
+                        { id: 'mil', label: '密耳 (mil)', ratioToAnchor: 0.0254 }, // 1 mil = 0.0254 mm
+                        { id: 'inch', label: '英寸 (inch)', ratioToAnchor: 25.4 }, // 1 inch = 25.4 mm
+                        { id: 'mm', label: '毫米 (mm)', ratioToAnchor: 1 } // 錨點為 mm
+                    ],
+                    area: [
+                        { id: 'mm2', label: '平方毫米 (mm²)', ratioToAnchor: 1 },
+                        { id: 'cm2', label: '平方厘米 (cm²)', ratioToAnchor: 100 },
+                        { id: 'sq_in', label: '平方英寸 (sq in)', ratioToAnchor: 645.16 }
+                    ],
+                    temperature: [
+                        { id: 'C', label: '攝氏度 (°C)', special: true },
+                        { id: 'F', label: '華氏度 (°F)', special: true },
+                        { id: 'K', label: '開氏度 (K)', special: true }
+                    ],
+                    resistivity: [
+                        { id: 'ucm', label: '微歐姆·厘米 (μΩ·cm)', ratioToAnchor: 1 },
+                        { id: 'om', label: '歐姆·米 (Ω·m)', ratioToAnchor: 100000000 } // 1 Ω·m = 10^8 μΩ·cm
+                    ]
+                }
+            }
+        };
+
+        // --- 全域初始化 ---
+        window.addEventListener('DOMContentLoaded', () => {
+            updateHeaderClock();
+            setInterval(updateHeaderClock, 1000);
+
+            // 手機版側邊選單手勢與切換
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('navLinks').classList.toggle('hidden');
+            });
+
+            // 初始化模組
+            initWhiteboard();
+            initColorProcessor();
+            renderTodoBoard();
+            calculateCellLayout();
+            calculateBusbar();
+            initResistorDecoder();
+            switchConverterCategory();
+            renderGanttChart();
+            renderMarkdownLive();
+            calculateCryptoHash();
+        });
+
+        function showToast(msg) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = "p-3 bg-indigo-600 text-white rounded-lg shadow-lg text-xs font-bold transition-all duration-300 transform translate-y-2 opacity-0 flex items-center space-x-2 pointer-events-auto";
+            toast.innerHTML = `<span>⚡</span><span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('opacity-0', 'translate-y-2'), 50);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function updateHeaderClock() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12 || 12;
+            m = m < 10 ? '0' + m : m;
+            document.getElementById('currentHeaderTime').innerText = `${h}:${m} ${ampm}`;
+        }
+
+        // --- 核心 Tab 分流切換 ---
+        function switchTab(tabId) {
+            AppState.activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            const act = document.getElementById(`tab-${tabId}`);
+            if (act) act.classList.add('active');
+
+            // 更新側邊欄樣式
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.className = "nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-100 border-l-4 border-transparent";
+            });
+            const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+            if (activeBtn) {
+                if (tabId === 'dashboard') {
+                    activeBtn.className = "nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition bg-indigo-600/10 text-indigo-400 border-l-4 border-indigo-500";
+                } else {
+                    activeBtn.className = "nav-item w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium transition bg-indigo-600/10 text-indigo-400 border-l-4 border-indigo-500";
+                }
+            }
+
+            // 更新標題資訊
+            const titleEl = document.getElementById('mainTitle');
+            const subEl = document.getElementById('mainSubtitle');
+
+            const meta = {
+                'dashboard': ['工作空間儀表板', '集中調度與管理 12 款工程、模擬與專案效率工具。'],
+                'cell-calculator': ['電芯排列與封裝佈局計算器', '智慧規劃電芯串並聯陣列，估計總體形狀尺寸。'],
+                'busbar-calculator': ['複合焊接導片直流阻抗模擬器', '計算兩層疊合金屬與焊接點之直流電阻、電壓降與功耗升溫。'],
+                'battery-lifecycle': ['鋰電池衰退與循環老化預測器', '建立 DoD 放電深度與溫度老化因子預估充放電壽命曲線。'],
+                'resistor-decoder': ['色環電阻與貼片 (SMD) 電阻解碼器', '解析 4環/5環 色環及 SMD 數字與 EIA-96 編碼規約。'],
+                'led-resistor': ['LED 迴路安全限流電阻分析器', '精確規劃順向發光二極體之限流阻值及安全功率耐受推薦。'],
+                'color-replacer': ['圖片色彩提取與局部像素替換器', '在畫布採樣特定顏色，一鍵將相近顏色精準覆蓋替換。'],
+                'fourier-synth': ['傅立葉波形合成與諧波頻譜器', '調控諧波振幅與基頻，觀察時域綜合訊號與頻譜特徵。'],
+                'unit-converter': ['物理工程多向單位轉換面板', ' mil、inch、mm、截面積、熱力溫度、阻抗率等精準自動換算。'],
+                'whiteboard': ['靈感隨手草稿與手寫白板', '自由勾勒電路或思維導圖，支援步驟返回及透明 PNG 匯出。'],
+                'gantt': ['敏捷開發排程甘特圖產生器', '圖形化動態展示多任務進度與起訖時間百分比。'],
+                'markdown-preview': ['Markdown 即時文件預覽器', '採用標準 Markdown 語法解析，一邊輸入一邊即時呈現技術規範書。'],
+                'dev-generator': ['金鑰密碼與 Cryptographic Hash 生成器', '生成安全隨機密碼，並透過原生 WebCrypto 計算高強度 SHA-256 數位簽章。'],
+                'todo': ['研發專案敏捷看板', '流暢移動卡片階段，推進日常技術研發流程。']
+            };
+
+            titleEl.innerText = meta[tabId]?.[0] || '我的工作台';
+            subEl.innerText = meta[tabId]?.[1] || '';
+
+            if (tabId === 'whiteboard') resizeWhiteboardCanvas();
+            if (tabId === 'fourier-synth') drawFourierWave();
+            if (tabId === 'battery-lifecycle') calculateBatteryLifecycle();
+        }
+
+        // ==================== 1. 電芯排列計算器 ====================
+        function toggleCellTypeInputs() {
+            const type = document.getElementById('cellType').value;
+            document.getElementById('cylindricalSpecs').classList.toggle('hidden', type !== 'cylindrical');
+            document.getElementById('prismaticSpecs').classList.toggle('hidden', type === 'cylindrical');
+            if (type === 'prismatic') document.getElementById('layoutStyle').value = 'aligned';
+        }
+
+        function applyCylPreset() {
+            const preset = document.getElementById('cylPreset').value;
+            const d = document.getElementById('cylDiameter');
+            const h = document.getElementById('cylHeight');
+            if (preset === '18650') { d.value = 18; h.value = 65; }
+            else if (preset === '21700') { d.value = 21; h.value = 70; }
+            else if (preset === '32650') { d.value = 32; h.value = 65; }
+        }
+
+        function calculateCellLayout() {
+            const type = document.getElementById('cellType').value;
+            const S = parseInt(document.getElementById('seriesCount').value) || 1;
+            const P = parseInt(document.getElementById('parallelCount').value) || 1;
+            const singleV = parseFloat(document.getElementById('singleVolts').value) || 3.7;
+            const singleAh = parseFloat(document.getElementById('singleCapacity').value) || 4.5;
+            const cellGap = parseFloat(document.getElementById('cellGap').value) || 2;
+            const style = document.getElementById('layoutStyle').value;
+
+            const total = S * P;
+            const volts = (S * singleV).toFixed(1);
+            const capacity = (P * singleAh).toFixed(1);
+            const energy = (volts * capacity).toFixed(1);
+
+            document.getElementById('outTotalCells').innerText = `${total} pcs`;
+            document.getElementById('outPackVolts').innerText = `${volts} V`;
+            document.getElementById('outPackCapacity').innerText = `${capacity} Ah`;
+            document.getElementById('outPackEnergy').innerText = `${energy} Wh`;
+
+            let w = 21, h = 21;
+            if (type === 'cylindrical') {
+                w = parseFloat(document.getElementById('cylDiameter').value) || 21;
+                h = w;
+            } else {
+                w = parseFloat(document.getElementById('prisWidth').value) || 148;
+                h = parseFloat(document.getElementById('prisThick').value) || 27;
+            }
+
+            let packL = (S * w + (S - 1) * cellGap).toFixed(0);
+            let packW = (P * h + (P - 1) * cellGap).toFixed(0);
+            if (type === 'cylindrical' && style === 'honeycomb') {
+                packL = (S * w * 0.866 + cellGap * S).toFixed(0);
+                packW = (P * (h + cellGap) + h * 0.5).toFixed(0);
+            }
+            document.getElementById('outPackDimensions').innerText = `長度: ${packL} mm | 寬度: ${packW} mm | 高度: ${type === 'cylindrical' ? document.getElementById('cylHeight').value : document.getElementById('prisHeight').value} mm`;
+
+            drawCells(type, S, P, w, h, cellGap, style);
+        }
+
+        function drawCells(type, S, P, w, h, gap, style) {
+            const canvas = document.getElementById('cellLayoutCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 600;
+            canvas.height = 250;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const scale = Math.min((canvas.width - 60) / (S * (w + gap)), (canvas.height - 60) / (P * (h + gap)));
+            const startX = (canvas.width - (S * (w + gap)) * scale) / 2;
+            const startY = (canvas.height - (P * (h + gap)) * scale) / 2;
+
+            for (let s = 0; s < S; s++) {
+                let gx = startX + s * (w + gap) * scale;
+                if (type === 'cylindrical' && style === 'honeycomb') gx = startX + s * (w + gap) * scale * 0.866;
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.05)';
+                ctx.beginPath();
+                ctx.roundRect(gx - 2, startY - 2, w * scale + 4, (P * (h + gap)) * scale + 4, 4);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            for (let s = 0; s < S; s++) {
+                for (let p = 0; p < P; p++) {
+                    let cx = startX + s * (w + gap) * scale;
+                    let cy = startY + p * (h + gap) * scale;
+                    if (type === 'cylindrical' && style === 'honeycomb') {
+                        cx = startX + s * (w + gap) * scale * 0.866;
+                        if (s % 2 !== 0) cy += (h + gap) * scale * 0.5;
+                    }
+
+                    if (type === 'cylindrical') {
+                        ctx.beginPath();
+                        ctx.arc(cx + (w * scale)/2, cy + (h * scale)/2, (w * scale)/2, 0, Math.PI*2);
+                        ctx.fillStyle = '#1e1b4b';
+                        ctx.fill();
+                        ctx.strokeStyle = '#6366f1';
+                        ctx.stroke();
+                        ctx.fillStyle = '#a5b4fc';
+                        ctx.fillText('+', cx + (w * scale)/2 - 3, cy + (h * scale)/2 + 3);
+                    } else {
+                        ctx.beginPath();
+                        ctx.roundRect(cx, cy, w * scale, h * scale, 3);
+                        ctx.fillStyle = '#1e1b4b';
+                        ctx.fill();
+                        ctx.strokeStyle = '#38bdf8';
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        // ==================== 2. 複合導片阻抗計算器 ====================
+        function toggleLayer2Inputs() {
+            const hasL2 = document.getElementById('useLayer2').checked;
+            document.getElementById('layer2Inputs').classList.toggle('hidden', !hasL2);
+            calculateBusbar();
+        }
+
+        function calculateBusbar() {
+            const rho1 = parseFloat(document.getElementById('layer1Material').value);
+            const t1 = parseFloat(document.getElementById('layer1Thick').value) || 0.2;
+            const w = parseFloat(document.getElementById('busbarWidth').value) || 12;
+            const L = parseFloat(document.getElementById('busbarLength').value) || 85;
+            const hasL2 = document.getElementById('useLayer2').checked;
+            const weld = parseInt(document.getElementById('weldSpots').value) || 4;
+            const singleR = parseFloat(document.getElementById('weldResistance').value) || 0.5;
+            const current = parseFloat(document.getElementById('loadCurrent').value) || 45;
+
+            const area1 = w * t1;
+            const r1 = (rho1 * (L / 1000) / (area1 / 1000000)) * 1000;
+            let finalR = r1;
+
+            if (hasL2) {
+                const rho2 = parseFloat(document.getElementById('layer2Material').value);
+                const t2 = parseFloat(document.getElementById('layer2Thick').value) || 0.05;
+                const area2 = w * t2;
+                const r2 = (rho2 * (L / 1000) / (area2 / 1000000)) * 1000;
+                finalR = (r1 * r2) / (r1 + r2);
+            }
+
+            const contact = singleR / weld;
+            const totalR = finalR + contact;
+            const drop = (current * (totalR / 1000)) * 1000;
+            const loss = Math.pow(current, 2) * (totalR / 1000);
+
+            document.getElementById('outBusbarR').innerText = `${finalR.toFixed(3)} mΩ`;
+            document.getElementById('outContactR').innerText = `${contact.toFixed(3)} mΩ`;
+            document.getElementById('outVoltageDrop').innerText = `${drop.toFixed(2)} mV`;
+            document.getElementById('outPowerLoss').innerText = `${loss.toFixed(2)} W`;
+
+            const sevBlock = document.getElementById('thermalSeverityBlock');
+            const severityLabel = document.getElementById('thermalLabel');
+            const severityDesc = document.getElementById('thermalDesc');
+
+            if (loss < 1) {
+                sevBlock.className = "mt-4 p-3 rounded-lg border border-emerald-500/20 bg-emerald-950/10 text-emerald-400";
+                severityLabel.innerText = "熱安全：優良 (Safe)";
+                severityDesc.innerText = "熱耗散功率極低。常溫運行無熱應力累積。";
+            } else if (loss < 5) {
+                sevBlock.className = "mt-4 p-3 rounded-lg border border-amber-500/20 bg-amber-950/10 text-amber-400";
+                severityLabel.innerText = "熱溫升：溫和警示 (Moderate Temp)";
+                severityDesc.innerText = "局部可能產生 15~30°C 溫升，建議周圍配合散熱。";
+            } else {
+                sevBlock.className = "mt-4 p-3 rounded-lg border border-rose-500/20 bg-rose-950/10 text-rose-400";
+                severityLabel.innerText = "熱危險：極高發熱 (High Heat Warning)";
+                severityDesc.innerText = "熱耗散大於 5W，導體溫度極高。需增厚導片或實施散熱結構！";
+            }
+        }
+
+        // ==================== 3. 新增: 鋰電池衰退預測器 ====================
+        function calculateBatteryLifecycle() {
+            const dod = parseFloat(document.getElementById('paramDoD').value) || 80;
+            const temp = parseFloat(document.getElementById('paramTemp').value) || 25;
+            const crate = parseFloat(document.getElementById('paramCRate').value) || 0.5;
+
+            const canvas = document.getElementById('lifecycleCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 600;
+            canvas.height = 300;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 衰退物理建模：SoH_n = 100 - Alpha * n ^ Beta
+            // 溫度加速因子 (Arrhenius-like)
+            const tempFactor = Math.exp((temp - 25) / 15);
+            // DoD 老化因子 (指數)
+            const dodFactor = Math.pow(dod / 80, 1.8);
+            // C-rate 老化因子
+            const rateFactor = Math.pow(crate / 0.5, 1.3);
+
+            const alpha = 0.005 * tempFactor * dodFactor * rateFactor;
+            const beta = 0.82; // 常規鋰電衰退曲線指數
+
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+
+            const padding = 40;
+            const graphW = canvas.width - padding * 2;
+            const graphH = canvas.height - padding * 2;
+
+            // 繪製背景網格與坐標軸
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                let x = padding + (graphW / 5) * i;
+                let y = padding + (graphH / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, padding);
+                ctx.lineTo(x, canvas.height - padding);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+
+                // 標記文字
+                ctx.fillStyle = '#64748b';
+                ctx.font = '9px monospace';
+                ctx.fillText((i * 200).toString(), x - 10, canvas.height - padding + 15);
+                ctx.fillText((100 - i * 10) + '%', padding - 28, y + 3);
+            }
+
+            // 繪製衰退線
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let cycle = 0; cycle <= 1000; cycle += 10) {
+                let soh = 100 - alpha * Math.pow(cycle, beta);
+                if (soh < 0) soh = 0;
+
+                let px = padding + (cycle / 1000) * graphW;
+                let py = padding + ((100 - soh) / 50) * graphH; // Y 軸放大 100%~50%
+
+                if (cycle === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            // 標示極限線 (80% 壽命終點)
+            ctx.strokeStyle = '#ef4444';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            let limitY = padding + ((100 - 80) / 50) * graphH;
+            ctx.moveTo(padding, limitY);
+            ctx.lineTo(canvas.width - padding, limitY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#ef4444';
+            ctx.fillText('80% 壽命終界線 (EoL)', canvas.width - 150, limitY - 5);
+            showToast('充放電循環衰退健康度模型繪製成功！');
+        }
+
+        // ==================== 4. 新增: 電阻色碼與貼片解碼 ====================
+        const resistorColors = {
+            black: { name: '黑', val: 0, mult: 1, tol: null, hex: '#000000' },
+            brown: { name: '棕', val: 1, mult: 10, tol: 1, hex: '#78350f' },
+            red: { name: '紅', val: 2, mult: 100, tol: 2, hex: '#ef4444' },
+            orange: { name: '橙', val: 3, mult: 1000, tol: null, hex: '#f97316' },
+            yellow: { name: '黃', val: 4, mult: 10000, tol: null, hex: '#eab308' },
+            green: { name: '綠', val: 5, mult: 100000, tol: 0.5, hex: '#22c55e' },
+            blue: { name: '藍', val: 6, mult: 1000000, tol: 0.25, hex: '#3b82f6' },
+            violet: { name: '紫', val: 7, mult: 10000000, tol: 0.1, hex: '#a855f7' },
+            gray: { name: '灰', val: 8, mult: 100000000, tol: 0.05, hex: '#64748b' },
+            white: { name: '白', val: 9, mult: 1000000000, tol: null, hex: '#ffffff' },
+            gold: { name: '金', val: null, mult: 0.1, tol: 5, hex: '#fbbf24' },
+            silver: { name: '銀', val: null, mult: 0.01, tol: 10, hex: '#cbd5e1' }
+        };
+
+        function initResistorDecoder() {
+            const selects = ['band1', 'band2', 'band3', 'bandMult', 'bandTol'];
+            selects.forEach(selId => {
+                const el = document.getElementById(selId);
+                el.innerHTML = '';
+                for (const [key, item] of Object.entries(resistorColors)) {
+                    // 根據各環限制過濾
+                    if (selId === 'band1' || selId === 'band2' || selId === 'band3') {
+                        if (item.val === null) continue;
+                    }
+                    if (selId === 'bandTol' && item.tol === null) continue;
+
+                    let label = `${item.name} (${item.val !== null ? item.val : (selId === 'bandMult' ? 'x'+item.mult : '±'+item.tol+'%')})`;
+                    el.innerHTML += `<option value="${key}">${label}</option>`;
+                }
+            });
+
+            // 預設配置
+            document.getElementById('band1').value = 'brown';
+            document.getElementById('band2').value = 'black';
+            document.getElementById('band3').value = 'black';
+            document.getElementById('bandMult').value = 'orange';
+            document.getElementById('bandTol').value = 'gold';
+
+            decodeResistor();
+        }
+
+        function toggleBands() {
+            const mode = document.querySelector('input[name="bandType"]:checked').value;
+            const b3Container = document.getElementById('band3Container');
+            const vBand3 = document.getElementById('v_band3');
+
+            if (mode === '4') {
+                b3Container.classList.add('hidden');
+                vBand3.classList.add('hidden');
+            } else {
+                b3Container.classList.remove('hidden');
+                vBand3.classList.remove('hidden');
+            }
+            decodeResistor();
+        }
+
+        function decodeResistor() {
+            const mode = document.querySelector('input[name="bandType"]:checked').value;
+            const b1 = document.getElementById('band1').value;
+            const b2 = document.getElementById('band2').value;
+            const b3 = document.getElementById('band3').value;
+            const bm = document.getElementById('bandMult').value;
+            const bt = document.getElementById('bandTol').value;
+
+            // 設置虛擬電阻的色條背景
+            document.getElementById('v_band1').setAttribute('fill', resistorColors[b1].hex);
+            document.getElementById('v_band2').setAttribute('fill', resistorColors[b2].hex);
+            document.getElementById('v_band3').setAttribute('fill', resistorColors[b3].hex);
+            document.getElementById('v_bandMult').setAttribute('fill', resistorColors[bm].hex);
+            document.getElementById('v_bandTol').setAttribute('fill', resistorColors[bt].hex);
+
+            let value = 0;
+            if (mode === '4') {
+                value = (resistorColors[b1].val * 10 + resistorColors[b2].val) * resistorColors[bm].mult;
+            } else {
+                value = (resistorColors[b1].val * 100 + resistorColors[b2].val * 10 + resistorColors[b3].val) * resistorColors[bm].mult;
+            }
+
+            let formattedVal = "";
+            if (value >= 1000000) formattedVal = (value / 1000000).toFixed(1) + " MΩ";
+            else if (value >= 1000) formattedVal = (value / 1000).toFixed(1) + " kΩ";
+            else formattedVal = value.toFixed(1) + " Ω";
+
+            document.getElementById('resistorResultValue').innerText = `${formattedVal} ± ${resistorColors[bt].tol}%`;
+        }
+
+        function decodeSMD() {
+            const raw = document.getElementById('smdCodeInput').value.trim().toUpperCase();
+            const resultText = document.getElementById('smdResultText');
+            document.getElementById('smdDrawText').innerText = raw;
+
+            if (/^\d{3}$/.test(raw)) {
+                // 3位數阻值
+                const val = parseInt(raw.substring(0, 2));
+                const exp = parseInt(raw.substring(2));
+                const ohm = val * Math.pow(10, exp);
+                resultText.innerText = `${ohm.toLocaleString()} Ω (${(ohm/1000).toFixed(1)} kΩ) ± 5%`;
+            } else if (/^\d{4}$/.test(raw)) {
+                // 4位數阻值
+                const val = parseInt(raw.substring(0, 3));
+                const exp = parseInt(raw.substring(3));
+                const ohm = val * Math.pow(10, exp);
+                resultText.innerText = `${ohm.toLocaleString()} Ω (${(ohm/1000).toFixed(1)} kΩ) ± 1%`;
+            } else if (/^\d[R]\d$/.test(raw) || /^[R]\d\d$/.test(raw) || /^\d\d[R]$/.test(raw)) {
+                // 帶 R 點阻抗
+                const rawOhm = raw.replace('R', '.');
+                resultText.innerText = `${parseFloat(rawOhm)} Ω`;
+            } else {
+                resultText.innerText = "無法解析該代碼，請確認是否為標準 3/4 位數阻值標記。";
+            }
+            showToast('SMD 阻抗解碼計算完成！');
+        }
+
+        // ==================== 5. 新增: LED 限流電阻計算 ====================
+        function calculateLedResistor() {
+            const Vs = parseFloat(document.getElementById('ledVs').value) || 12;
+            const Vf = parseFloat(document.getElementById('ledVf').value) || 2.2;
+            const If_mA = parseFloat(document.getElementById('ledIf').value) || 20;
+
+            const If = If_mA / 1000;
+            if (Vs <= Vf) {
+                showToast('供電電壓必須高於 LED 順向壓降！', 'error');
+                return;
+            }
+
+            const R = (Vs - Vf) / If;
+            const power = Math.pow(Vs - Vf, 2) / R;
+
+            // 匹配常用標準瓦數
+            let rating = "1/4 W";
+            if (power > 2) rating = "5 W 功率型";
+            else if (power > 1) rating = "2 W 高功率";
+            else if (power > 0.5) rating = "1 W 封裝";
+            else if (power > 0.25) rating = "1/2 W 封裝";
+
+            document.getElementById('outLedR').innerText = `${R.toFixed(1)} Ω`;
+            document.getElementById('outLedP').innerText = `${rating} (散熱功耗: ${power.toFixed(2)}W)`;
+            showToast('LED 安全限流阻值運算完成！');
+        }
+
+        // ==================== 6. 圖片色彩辨識與替換 ====================
+        function initColorProcessor() {
+            loadTestPattern();
+            const canvas = document.getElementById('colorProcessorCanvas');
+            canvas.addEventListener('click', sampleColorAtPixel);
+        }
+
+        function loadTestPattern() {
+            const canvas = document.getElementById('colorProcessorCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 200;
+
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#ef4444'; // 紅
+            ctx.fillRect(40, 40, 100, 100);
+
+            ctx.fillStyle = '#22c55e'; // 綠
+            ctx.beginPath();
+            ctx.arc(220, 90, 50, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#eab308'; // 黃
+            ctx.fillRect(290, 40, 80, 100);
+
+            AppState.colorProcessor.originalData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const r = new FileReader();
+            r.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.getElementById('colorProcessorCanvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width > 500 ? 500 : img.width;
+                    canvas.height = img.height * (canvas.width / img.width);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    AppState.colorProcessor.originalData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    showToast('自訂圖片載入成功！');
+                };
+                img.src = event.target.result;
+            };
+            r.readAsDataURL(file);
+        }
+
+        function sampleColorAtPixel(e) {
+            const canvas = document.getElementById('colorProcessorCanvas');
+            const ctx = canvas.getContext('2d');
+            const r = canvas.getBoundingClientRect();
+            const sx = canvas.width / r.width;
+            const sy = canvas.height / r.height;
+            const x = (e.clientX - r.left) * sx;
+            const y = (e.clientY - r.top) * sy;
+
+            const pixel = ctx.getImageData(x, y, 1, 1).data;
+            const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
+            document.getElementById('sampledColorHex').value = hex.toUpperCase();
+            document.getElementById('sampledColorPreview').style.backgroundColor = hex;
+        }
+
+        function setSampledAsTarget() {
+            document.getElementById('targetColorInput').value = document.getElementById('sampledColorHex').value;
+            showToast('已鎖定轉換目標色！');
+        }
+
+        function applyColorReplacement() {
+            const canvas = document.getElementById('colorProcessorCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.putImageData(AppState.colorProcessor.originalData, 0, 0);
+
+            const target = hexToRgb(document.getElementById('targetColorInput').value);
+            const replace = hexToRgb(document.getElementById('replacementColorInput').value);
+            const tol = parseInt(document.getElementById('colorTolerance').value) || 20;
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+
+            for (let i = 0; i < data.length; i += 4) {
+                const dist = Math.sqrt(Math.pow(data[i] - target.r, 2) + Math.pow(data[i+1] - target.g, 2) + Math.pow(data[i+2] - target.b, 2));
+                if ((dist / 442) * 100 <= tol) {
+                    data[i] = replace.r;
+                    data[i+1] = replace.g;
+                    data[i+2] = replace.b;
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            showToast('色彩替換計算完成！');
+        }
+
+        function downloadProcessedImage() {
+            const canvas = document.getElementById('colorProcessorCanvas');
+            const l = document.createElement('a');
+            l.download = 'color_replaced.png';
+            l.href = canvas.toDataURL();
+            l.click();
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+        function hexToRgb(hex) {
+            const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : { r:0, g:0, b:0 };
+        }
+
+        // ==================== 7. 新增: 傅立葉波形與頻譜模擬 ====================
+        function drawFourierWave() {
+            const canvasT = document.getElementById('fourierTimeCanvas');
+            const canvasF = document.getElementById('fourierFreqCanvas');
+            if (!canvasT || !canvasF) return;
+
+            const ctxT = canvasT.getContext('2d');
+            const ctxF = canvasF.getContext('2d');
+
+            canvasT.width = 600; canvasT.height = 150;
+            canvasF.width = 600; canvasF.height = 120;
+
+            ctxT.clearRect(0, 0, canvasT.width, canvasT.height);
+            ctxF.clearRect(0, 0, canvasF.width, canvasF.height);
+
+            const a1 = parseFloat(document.getElementById('harmonic1').value);
+            const a2 = parseFloat(document.getElementById('harmonic2').value);
+            const a3 = parseFloat(document.getElementById('harmonic3').value);
+            const a4 = parseFloat(document.getElementById('harmonic4').value);
+            const a5 = parseFloat(document.getElementById('harmonic5').value);
+
+            // 繪製時域波
+            ctxT.strokeStyle = '#1e293b';
+            ctxT.beginPath();
+            ctxT.moveTo(0, canvasT.height/2);
+            ctxT.lineTo(canvasT.width, canvasT.height/2);
+            ctxT.stroke();
+
+            ctxT.strokeStyle = '#ec4899';
+            ctxT.lineWidth = 2.5;
+            ctxT.beginPath();
+
+            for (let x = 0; x < canvasT.width; x++) {
+                let theta = (x / canvasT.width) * Math.PI * 4; // 顯示兩個波形週期
+                let y = a1 * Math.sin(theta) +
+                        a2 * Math.sin(theta * 2) +
+                        a3 * Math.sin(theta * 3) +
+                        a4 * Math.sin(theta * 4) +
+                        a5 * Math.sin(theta * 5);
+                
+                // 縮放並置中波幅
+                let py = (canvasT.height / 2) - y * (canvasT.height / 3.5);
+                if (x === 0) ctxT.moveTo(x, py);
+                else ctxT.lineTo(x, py);
+            }
+            ctxT.stroke();
+
+            // 繪製頻域直方圖
+            const amps = [a1, a2, a3, a4, a5];
+            const barW = 40;
+            const startX = 100;
+            ctxF.fillStyle = '#6366f1';
+
+            // 畫基線
+            ctxF.strokeStyle = '#1e293b';
+            ctxF.beginPath();
+            ctxF.moveTo(50, 100);
+            ctxF.lineTo(550, 100);
+            ctxF.stroke();
+
+            for (let i = 0; i < 5; i++) {
+                let bx = startX + i * 80;
+                let h = amps[i] * 80;
+                ctxF.fillRect(bx, 100 - h, barW, h);
+
+                ctxF.fillStyle = '#94a3b8';
+                ctxF.font = '9px monospace';
+                ctxF.fillText(`f${i+1}`, bx + 15, 115);
+                ctxF.fillStyle = '#6366f1';
+            }
+        }
+
+        function presetWave(type) {
+            if (type === 'square') {
+                document.getElementById('harmonic1').value = 1.0;
+                document.getElementById('harmonic2').value = 0.0;
+                document.getElementById('harmonic3').value = 0.33;
+                document.getElementById('harmonic4').value = 0.0;
+                document.getElementById('harmonic5').value = 0.20;
+            } else if (type === 'sawtooth') {
+                document.getElementById('harmonic1').value = 1.0;
+                document.getElementById('harmonic2').value = 0.5;
+                document.getElementById('harmonic3').value = 0.33;
+                document.getElementById('harmonic4').value = 0.25;
+                document.getElementById('harmonic5').value = 0.20;
+            }
+            // 同步標記
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`lblH${i}`).innerText = parseFloat(document.getElementById(`harmonic${i}`).value).toFixed(2);
+            }
+            drawFourierWave();
+            showToast('傅立葉諧波預設參數合成成功！');
+        }
+
+        // ==================== 8. 新增: 物理工程單位轉換 ====================
+        function switchConverterCategory() {
+            const cat = document.getElementById('converterCategory').value;
+            AppState.unitConverter.category = cat;
+
+            const container = document.getElementById('unitInputsContainer');
+            container.innerHTML = '';
+
+            const fields = AppState.unitConverter.definitions[cat];
+            fields.forEach(field => {
+                container.innerHTML += `
+                    <div class="bg-slate-950 p-4 border border-slate-800 rounded-xl">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">${field.label}</label>
+                        <input type="number" id="unit_${field.id}" oninput="performUnitConversion('${field.id}')" value="1" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-indigo-400 font-mono focus:outline-none">
+                    </div>
+                `;
+            });
+            performUnitConversion(fields[0].id);
+        }
+
+        function performUnitConversion(triggerId) {
+            const cat = AppState.unitConverter.category;
+            const fields = AppState.unitConverter.definitions[cat];
+            const triggerVal = parseFloat(document.getElementById(`unit_${triggerId}`).value) || 0;
+
+            if (cat === 'temperature') {
+                // 溫度特殊轉換
+                let cValue = 0;
+                if (triggerId === 'C') cValue = triggerVal;
+                else if (triggerId === 'F') cValue = (triggerVal - 32) * 5/9;
+                else if (triggerId === 'K') cValue = triggerVal - 273.15;
+
+                fields.forEach(f => {
+                    if (f.id === triggerId) return;
+                    let outVal = 0;
+                    if (f.id === 'C') outVal = cValue;
+                    else if (f.id === 'F') outVal = cValue * 9/5 + 32;
+                    else if (f.id === 'K') outVal = cValue + 273.15;
+                    document.getElementById(`unit_${f.id}`).value = outVal.toFixed(2);
+                });
+            } else {
+                // 標準線性乘積轉換
+                const triggerDef = fields.find(f => f.id === triggerId);
+                // 轉換到錨點標準基準值
+                const anchorValue = triggerVal * triggerDef.ratioToAnchor;
+
+                fields.forEach(f => {
+                    if (f.id === triggerId) return;
+                    const converted = anchorValue / f.ratioToAnchor;
+                    document.getElementById(`unit_${f.id}`).value = converted.toFixed(4);
+                });
+            }
+        }
+
+        // ==================== 9. 世界時間轉換 ====================
+        function resetSliderToCurrent() {
+            const localHr = new Date().getHours();
+            document.getElementById('timeSlider').value = localHr;
+            renderWorldClocks(localHr);
+        }
+        function onTimeSliderChange(val) {
+            renderWorldClocks(parseInt(val));
+        }
+        function renderWorldClocks(baseHour = 12) {
+            const container = document.getElementById('clocksGrid');
+            container.innerHTML = '';
+            AppState.cities.forEach(city => {
+                let cityHour = (baseHour - 8 + city.offset);
+                let dayOffset = "今天";
+                if (cityHour < 0) { dayOffset = "昨天"; cityHour += 24; }
+                else if (cityHour >= 24) { dayOffset = "明天"; cityHour -= 24; }
+
+                let badgeColor = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20";
+                let statusText = "深夜深度睡眠";
+                if (cityHour >= 9 && cityHour < 18) {
+                    badgeColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                    statusText = "標準黃金工時";
+                } else if ((cityHour >= 6 && cityHour < 9) || (cityHour >= 18 && cityHour < 22)) {
+                    badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+                    statusText = "非工閒暇時間";
+                }
+
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                if (triggerId === 'F') cValue = (triggerVal - 32) * 5/9;
+                else if (triggerId === 'K') cValue = triggerVal - 273.15;
+
+                fields.forEach(f => {
+                    if (f.id === triggerId) return;
+                    let outVal = 0;
+                    if (f.id === 'C') outVal = cValue;
+                    else if (f.id === 'F') outVal = cValue * 9/5 + 32;
+                    else if (f.id === 'K') outVal = cValue + 273.15;
+                    document.getElementById(`unit_${f.id}`).value = outVal.toFixed(2);
+                });
+            } else {
+                // 標準線性乘積轉換
+                const triggerDef = fields.find(f => f.id === triggerId);
+                // 轉換到錨點標準基準值
+                const anchorValue = triggerVal * triggerDef.ratioToAnchor;
+
+                fields.forEach(f => {
+                    if (f.id === triggerId) return;
+                    const converted = anchorValue / f.ratioToAnchor;
+                    document.getElementById(`unit_${f.id}`).value = converted.toFixed(4);
+                });
+            }
+        }
+
+        // ==================== 10. 隨手靈感白板 ====================
+        function initWhiteboard() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            canvas.addEventListener('mousedown', startPaint);
+            canvas.addEventListener('mousemove', paint);
+            canvas.addEventListener('mouseup', stopPaint);
+            canvas.addEventListener('mouseout', stopPaint);
+            saveState();
+        }
+        function resizeWhiteboardCanvas() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            const container = document.getElementById('whiteboardContainer');
+            if (canvas && container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+        function startPaint(e) {
+            AppState.whiteboard.isPainting = true;
+            AppState.whiteboard.lastX = e.offsetX;
+            AppState.whiteboard.lastY = e.offsetY;
+        }
+        function paint(e) {
+            if (!AppState.whiteboard.isPainting) return;
+            const canvas = document.getElementById('whiteboardCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = document.getElementById('paintColor').value;
+            ctx.lineWidth = document.getElementById('paintSize').value;
+            ctx.lineCap = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(AppState.whiteboard.lastX, AppState.whiteboard.lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+
+            AppState.whiteboard.lastX = e.offsetX;
+            AppState.whiteboard.lastY = e.offsetY;
+        }
+        function stopPaint() {
+            if (AppState.whiteboard.isPainting) {
+                AppState.whiteboard.isPainting = false;
+                saveState();
+            }
+        }
+        function saveState() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            if (!canvas) return;
+            AppState.whiteboard.historyStack = AppState.whiteboard.historyStack.slice(0, AppState.whiteboard.historyIndex + 1);
+            AppState.whiteboard.historyStack.push(canvas.toDataURL());
+            AppState.whiteboard.historyIndex++;
+        }
+        function undoWhiteboard() {
+            if (AppState.whiteboard.historyIndex > 0) {
+                AppState.whiteboard.historyIndex--;
+                restoreState();
+            }
+        }
+        function redoWhiteboard() {
+            if (AppState.whiteboard.historyIndex < AppState.whiteboard.historyStack.length - 1) {
+                AppState.whiteboard.historyIndex++;
+                restoreState();
+            }
+        }
+        function restoreState() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = AppState.whiteboard.historyStack[AppState.whiteboard.historyIndex];
+        }
+        function clearWhiteboard() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+            saveState();
+        }
+        function downloadWhiteboard() {
+            const canvas = document.getElementById('whiteboardCanvas');
+            const link = document.createElement('a');
+            link.download = 'whiteboard.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // ==================== 11. 新增: 專案時程甘特圖 ====================
+        function renderGanttChart() {
+            const container = document.getElementById('ganttChartBody');
+            container.innerHTML = '';
+
+            AppState.ganttTasks.forEach(task => {
+                // 30天跨度比例：1天 = 3.33%
+                const leftOffset = task.start * 3.33;
+                const widthOffset = task.duration * 3.33;
+
+                container.innerHTML += `
+                    <div class="flex items-center space-x-4">
+                        <div class="w-48 text-xs font-semibold text-slate-300 truncate">${task.name}</div>
+                        <div class="flex-1 bg-slate-950 rounded-lg h-8 relative border border-slate-800">
+                            <!-- 時間線進度條 -->
+                            <div class="absolute h-6 top-1 rounded bg-indigo-600/20 border border-indigo-500/40" style="left: ${leftOffset}%; width: ${widthOffset}%;">
+                                <div class="bg-indigo-500 h-full rounded text-[9px] font-bold text-white flex items-center justify-end pr-2" style="width: ${task.progress}%;">
+                                    ${task.progress}%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addGanttTask() {
+            const name = document.getElementById('ganttTaskName').value.trim();
+            const start = parseInt(document.getElementById('ganttTaskStart').value) || 0;
+            const dur = parseInt(document.getElementById('ganttTaskDuration').value) || 1;
+            const prog = parseInt(document.getElementById('ganttTaskProgress').value) || 0;
+
+            if (!name) return;
+
+            AppState.ganttTasks.push({
+                id: 'g_' + Date.now(),
+                name: name,
+                start: start,
+                duration: dur,
+                progress: prog
+            });
+
+            renderGanttChart();
+            showToast(`已加入甘特時程：${name}`);
+        }
+
+        // ==================== 12. 新增: Markdown 即時預覽 ====================
+        function renderMarkdownLive() {
+            const raw = document.getElementById('markdownInput').value;
+            const output = document.getElementById('markdownOutput');
+            
+            // 使用 marked.js 來解析 Markdown 本體並防禦 XSS (marked 本身支援過濾)
+            output.innerHTML = marked.parse(raw);
+        }
+
+        function loadSampleMarkdown() {
+            const sample = `# 鋰電池焊接導片研發專案
+---
+## A. 實驗材料與截面積
+* 主體基材：紅銅 (Copper) 鍍層
+* 焊接點接觸阻抗限定：< 0.2 mΩ
+
+## B. 甘特時程目標
+1. **D1-D6**：完成2D並聯匯流條防護結構渲染
+2. **D10**：1000次物理壽命衰退模型驗證
+            `;
+            document.getElementById('markdownInput').value = sample;
+            renderMarkdownLive();
+        }
+
+        // ==================== 13. 新增: 金鑰密碼與雜湊 ====================
+        function generateStrongPassword() {
+            const len = parseInt(document.getElementById('passwordLength').value) || 16;
+            const upper = document.getElementById('passUpper').checked;
+            const lower = document.getElementById('passLower').checked;
+            const num = document.getElementById('passNum').checked;
+            const sym = document.getElementById('passSym').checked;
+
+            let pool = "";
+            if (upper) pool += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (lower) pool += "abcdefghijklmnopqrstuvwxyz";
+            if (num) pool += "0123456789";
+            if (sym) pool += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+            if (!pool) {
+                showToast('請至少勾選一項密碼組成字元！', 'error');
+                return;
+            }
+
+            let result = "";
+            const array = new Uint32Array(len);
+            window.crypto.getRandomValues(array);
+            for (let i = 0; i < len; i++) {
+                result += pool[array[i] % pool.length];
+            }
+
+            document.getElementById('generatedPassword').innerText = result;
+            showToast('高安全隨機密碼生成成功！');
+        }
+
+        function copyPasswordToClipboard() {
+            const pass = document.getElementById('generatedPassword').innerText;
+            if (pass.includes('點選生成')) return;
+            // 由於 iframe 安全沙箱限制，使用備用 execCommand
+            const el = document.createElement('textarea');
+            el.value = pass;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast('密碼金鑰已成功複製到剪貼簿！');
+        }
+
+        async function calculateCryptoHash() {
+            const text = document.getElementById('hashInputText').value;
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            
+            try {
+                // 利用原生 WebCrypto 進行異步雜湊 (不需外部庫)
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                document.getElementById('outHashSha256').innerText = hashHex;
+            } catch (err) {
+                document.getElementById('outHashSha256').innerText = "計算失敗";
+            }
+        }
+
+        // ==================== 14. 研發敏捷工作看板 ====================
+        function renderTodoBoard() {
+            const colTodo = document.getElementById('col-todo');
+            const colProgress = document.getElementById('col-progress');
+            const colDone = document.getElementById('col-done');
+
+            colTodo.innerHTML = ''; colProgress.innerHTML = ''; colDone.innerHTML = '';
+            let counts = { todo: 0, progress: 0, done: 0 };
+
+            AppState.todos.forEach(task => {
+                counts[task.status]++;
+                let pClass = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+                if (task.priority === 'low') pClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                if (task.priority === 'medium') pClass = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+
+                const card = document.createElement('div');
+                card.className = "bg-slate-950 p-3 rounded-lg border border-slate-800 hover:border-indigo-500 shadow cursor-grab active:cursor-grabbing space-y-2";
+                card.draggable = true;
+                card.id = `task-${task.id}`;
+                card.addEventListener('dragstart', (e) => drag(e, task.id));
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="px-2 py-0.5 rounded text-[9px] font-bold border ${pClass}">${task.priority.toUpperCase()}</span>
+                        <button onclick="deleteTodo('${task.id}')" class="text-slate-500 hover:text-rose-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path></svg>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-200">${task.title}</p>
+                `;
+
+                if (task.status === 'todo') colTodo.appendChild(card);
+                else if (task.status === 'progress') colProgress.appendChild(card);
+                else if (task.status === 'done') colDone.appendChild(card);
+            });
+
+            document.getElementById('count-todo').innerText = counts.todo;
+            document.getElementById('count-progress').innerText = counts.progress;
+            document.getElementById('count-done').innerText = counts.done;
+        }
+        function allowDrop(e) { e.preventDefault(); }
+        function drag(e, id) { e.dataTransfer.setData("text", id); }
+        function drop(e, newStatus) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData("text");
+            const task = AppState.todos.find(t => t.id === id);
+            if (task) {
+                task.status = newStatus;
+                renderTodoBoard();
+                showToast(`任務已移動至 ${newStatus}`);
+            }
+        }
+        function openAddTodoModal() { document.getElementById('addTodoModal').classList.remove('hidden'); }
+        function closeAddTodoModal() { document.getElementById('addTodoModal').classList.add('hidden'); }
+        function createNewTodoTask() {
+            const title = document.getElementById('todoTitleInput').value.trim();
+            const priority = document.getElementById('todoPriorityInput').value;
+            if (!title) return;
+            AppState.todos.push({ id: 't_'+Date.now(), title, priority, status: 'todo' });
+            closeAddTodoModal();
+            renderTodoBoard();
+            showToast('專案任務卡片建立成功！');
+            document.getElementById('todoTitleInput').value = '';
+        }
+        function deleteTodo(id) {
+            AppState.todos = AppState.todos.filter(t => t.id !== id);
+            renderTodoBoard();
+            showToast('專案卡片已刪除。');
+        }
+    </script>
+</body>
+</html>
